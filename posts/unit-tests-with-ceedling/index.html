@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="Réaliser des tests unitaires en C (embarqué) avec Ceedling">
+
+  <title>Tests unitaires: tester un projet C (embarqué) avec Ceedling</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://MOWA2.com/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://MOWA2.com/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://MOWA2.com/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+</style>
+
+  <link rel="stylesheet" href="https://MOWA2.com/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://MOWA2.com/giallo-dark.css';
+    }
+  </script>
+  
+  
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#tester-son-code">Tester son code</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#les-risques-d-un-developpement-a-l-arrache">Les risques d&#x27;un développement &quot;à l&#x27;arrache&quot;</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#dormir-tranquille-grace-aux-tests-unitaires">Dormir tranquille grâce aux tests unitaires</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#disclaimer-aucune-solution-n-est-parfaite">Disclaimer: aucune solution n&#x27;est parfaite</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#demarrage-rapide-avec-ceedling">Démarrage rapide avec Ceedling</a>
+          
+          <ul>
+            
+            <li>
+              <a class="h3" href="#installation">Installation</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#guide-d-utilisation">Guide d&#x27;utilisation</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#pro-tips">Pro tips</a>
+            </li>
+            
+            <li>
+              <a class="h3" href="#template-fichier-de-test">Template fichier de test</a>
+            </li>
+            
+          </ul>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;MOWA2.com&#x2F;posts">← Retour</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Tests unitaires: tester un projet C (embarqué) avec Ceedling</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Mar 15, 2026</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://MOWA2.com/tags/tests-unitaires"><span>#</span>Tests unitaires</a><a class="instant" href="https://MOWA2.com/tags/code"><span>#</span>Code</a><a class="instant" href="https://MOWA2.com/tags/c"><span>#</span>C</a>
+          </div>
+          
+        </div>
+
+        
+        
+
+        <blockquote id="outdate_alert" class="callout caution hidden" data-days="120"
+          data-alert-text-before="This article was last updated "
+          data-alert-text-after=" days ago and may be out of date.">
+          <div class="content"></div>
+        </blockquote>
+        
+
+        <h1 id="tester-son-code">Tester son code<a class="zola-anchor" href="#tester-son-code" aria-label="Anchor link for: tester-son-code" style="visibility: hidden;"></a>
+</h1>
+<p>Aaaah, les tests… Probablement l’un des sujets qui divise le plus dans un bureau de dev'.</p>
+<blockquote>
+<p>« C’est inutile, ça prend trop de temps, le client testera. » « Il n’y a pas de tests ? On ne déploie rien. »</p>
+</blockquote>
+<p>Entre ceux qui ne voient que par le TDD et les afficionados du <code>printf("ça marche\n");</code>, il y a peut-être un juste milieu.</p>
+<p>Personnellement, je me range du côté de ceux qui pensent que la présence de tests, quels qu'ils soient, fait partie des critères de validation d'un développement — même en C. Surtout en C.</p>
+<p>Mais alors, comment tester son code ? Tests de bout en bout (E2E), d'intégration, unitaires, jéjé qui clique toute la journée et qui regarde si ça pète ? Même si la dernière était juste une petite boutade, en réalité, toutes les méthodes ont leur intêret et se complètent. À mon avis, le plus important c'est de se lancer et de commencer avec quelque chose, puis d'améliorer sa stratégie au fur et à mesure.</p>
+<blockquote>
+<p><em>Un seul test écrit, c’est déjà une fonctionnalité couverte.</em></p>
+</blockquote>
+<p>Dans cet article, je vais aborder le sujet des tests unitaires en C avec <a rel="nofollow noreferrer external" href="https://www.throwtheswitch.org/ceedling">Ceedling</a>. Pourquoi <a rel="nofollow noreferrer external" href="https://www.throwtheswitch.org/ceedling">Ceedling</a> ? Car c'est un outil complet, pensé pour le C, largement utilisé en embarqué, simplifiant énormément la mise en place d’une vraie stratégie de tests — sans transformer votre projet en usine à gaz.</p>
+<p>L’objectif ici n’est pas de devenir expert en tests en 15 minutes, mais de comprendre comment intégrer proprement des tests unitaires dans un projet C. Je ne vais pas non plus vous faire un cours magistral sur les tests unitaires — il existe déjà des centaines d’articles très bien faits sur le sujet. Néanmoins, je pense qu’un bref rappel est utile pour bien comprendre les enjeux, surtout dans un environnement embarqué (ou proche).</p>
+<h2 id="les-risques-d-un-developpement-a-l-arrache">Les risques d'un développement "à l'arrache"<a class="zola-anchor" href="#les-risques-d-un-developpement-a-l-arrache" aria-label="Anchor link for: les-risques-d-un-developpement-a-l-arrache" style="visibility: hidden;"></a>
+</h2>
+<p>La liste est looooooongue.. En voici un petit aperçu, non exhaustif:</p>
+<h3 id="les-3-mois-de-developpement-annonces-qui-s-etalent-sur-l-annee">Les 3 mois de développement annoncés qui s'étalent sur l'année<a class="zola-anchor" href="#les-3-mois-de-developpement-annonces-qui-s-etalent-sur-l-annee" aria-label="Anchor link for: les-3-mois-de-developpement-annonces-qui-s-etalent-sur-l-annee" style="visibility: hidden;"></a>
+</h3>
+<p>On pense gagner du temps en ne testant pas. Dans la réalité :</p>
+<ul>
+<li>Le développeur passe son temps à corriger, car la fonctionnalité ne fonctionne réellement qu'après quelques itérations.</li>
+<li>La recherche de bugs devient interminable: on ajoute des printf, on recompile, on reflashe, on recommence.</li>
+<li>La validation manuelle est fastidieuse, répétitive et tout les cas ne sont jamais couverts.</li>
+<li>Le refactoring est repoussé  depuis des mois, parce que "ça marche comme ça" et que personne n’a envie de découvrir ce que ça casse.</li>
+</ul>
+<p>Chaque bug coûte plus cher que s’il avait été détecté immédiatement.</p>
+<h3 id="les-regressions-et-effets-de-bord">Les régressions et effets de bord<a class="zola-anchor" href="#les-regressions-et-effets-de-bord" aria-label="Anchor link for: les-regressions-et-effets-de-bord" style="visibility: hidden;"></a>
+</h3>
+<p>Le module écrit il y a 3 ans, 1200 lignes, 14 variables globales, 8 dépendances croisées.. Bref personne n’ose y toucher. Tu corriges un bug ? Tu en créé deux nouveaux.</p>
+<p>Par le passé, un ami comparait souvent les correctifs sur des vieux softs sans tests ni documentation à une pelote de laine. Tu penses démêler en tirant doucement sur un fil, au final tu ne fais que créer un nouveau noeud dans une pelote déjà emmêlée.</p>
+<p>Pas de tests → pas de garde-fous. Chaque modification devient une expérience en production. Le client teste, et se plaint.</p>
+<h3 id="code-peu-ou-pas-fiable">Code peu (ou pas) fiable<a class="zola-anchor" href="#code-peu-ou-pas-fiable" aria-label="Anchor link for: code-peu-ou-pas-fiable" style="visibility: hidden;"></a>
+</h3>
+<p>Moins on teste, moins on maîtrise. Les bugs n’apparaissent pas toujours immédiatement, et peuvent provenir de n'importe où: Une valeur limite, un overflow/underflow, une condition rare, un reboot inattendu, un rayon cosmique (non pour celui là je rigole, même si <a rel="nofollow noreferrer external" href="https://cside.com/blog/cosmic-ray-bit-flips-and-the-hidden-risk-at-scale">c'est peut être déjà arrivé</a>)</p>
+<p>On peut penser au cas du Zune 30, bloqué le 31 décembre 2008 à cause d’un bug lié au calcul d’année bissextile - un cas limite, non anticipé, impact mondial.</p>
+<h2 id="dormir-tranquille-grace-aux-tests-unitaires">Dormir tranquille grâce aux tests unitaires<a class="zola-anchor" href="#dormir-tranquille-grace-aux-tests-unitaires" aria-label="Anchor link for: dormir-tranquille-grace-aux-tests-unitaires" style="visibility: hidden;"></a>
+</h2>
+<blockquote>
+<p>« Mais alors, qu'est ce que je peux faire pour éviter ça ? »</p>
+</blockquote>
+<p>Les tests unitaires constituent une véritable stratégie de gestion du risque, de documentation et d’amélioration continue. En investissant dans une bonne couverture de tests dès le début du projet, on gagne en stabilité, en rapidité de développement et en confiance collective, tout en réduisant les coûts de maintenance à long terme.</p>
+<h3 id="un-code-reellement-conforme-aux-attentes">Un code réellement conforme aux attentes<a class="zola-anchor" href="#un-code-reellement-conforme-aux-attentes" aria-label="Anchor link for: un-code-reellement-conforme-aux-attentes" style="visibility: hidden;"></a>
+</h3>
+<p>Avec la mise en place des tests unitaires, lorsqu'une fonctionnalité est demandée et qu'un cahier des charges est rédigé, le développeur peut en déduire des cas de tests. Le code pourra alors y être soumis, et le développement ne sera validé que lorsque l'entièreté des tests seront passés.</p>
+<p>Le développeur est en mesure d'au moins estimer clairement à quel point son développement est conforme et couvre les attentes du cahier des charges. Avant: « Oui normalement ça marche. » — après: « Je t'assure que dans ce cadre là, ça fonctionne! ».</p>
+<h3 id="une-auto-documentation">Une "auto-documentation"<a class="zola-anchor" href="#une-auto-documentation" aria-label="Anchor link for: une-auto-documentation" style="visibility: hidden;"></a>
+</h3>
+<p>Les tests unitaires sont une véritable documentation exécutable pour le code qu'ils couvrent. Entre le listing exhaustif des fonctionnalités, la démonstration de l'usage des fonctions de l'API et la mise en lumière des cas aux limites, il ne reste plus qu'à y insérer un schéma et une petite introduction pour disposer d'une base de documentation solide.</p>
+<p>C'est aussi une méthode très pérenne pour la documentation. Etant donné que les tests suivent l'évolution du code, la documentation est toujours à jour! ;)</p>
+<h3 id="une-architecture-mieux-pensee">Une architecture mieux pensée<a class="zola-anchor" href="#une-architecture-mieux-pensee" aria-label="Anchor link for: une-architecture-mieux-pensee" style="visibility: hidden;"></a>
+</h3>
+<p>Je ne dis pas que sans tests unitaires, il est impossible de concevoir une architecture correcte.. L'inverse n'est pas toujours vrai non plus. Mais la mise en place des TUs force le développeur à réfléchir, et cette réflexion permet d'éviter une dette technique potentiellement fatale pour un projet.</p>
+<p>Adieu les 36 dépendances imbriquées, les fonctionnements bancales et les corner case cachés; place aux workflow clairs et aux API proprement structurées!</p>
+<h3 id="le-filet-de-securite-dont-revent-tous-les-developpeurs">Le filet de sécurité dont rêvent tous les développeurs<a class="zola-anchor" href="#le-filet-de-securite-dont-revent-tous-les-developpeurs" aria-label="Anchor link for: le-filet-de-securite-dont-revent-tous-les-developpeurs" style="visibility: hidden;"></a>
+</h3>
+<p>Mise en contexte: Vous ajoutez une fonctionnalité sur un code déjà existant. Vous touchez un peu partout, parfois même à des endroits dont vous n'avez pas une maîtrise totale. L'angoisse monte... « J'espère que je n'ai rien cassé.. » « C'est le socle principal de l'application.. ». Vous découvrez alors un dossier tests/, contenant un readme indiquant les étapes à suivre pour les exécuter.</p>
+<p>Quelques secondes plus tard, vous lancez les tests. Les tests unitaires deviennent alors un véritable filet de sécurité : ils permettent de vérifier rapidement que vos modifications n’ont pas introduit de régressions et offrent la confiance nécessaire pour continuer à faire évoluer le code sereinement — même lorsque plusieurs développeurs travaillent dessus.</p>
+<p>Bien entendu avant de partir, vous vous assurez d'avoir ajouté les tests nécessaires pour couvrir le code que vous venez d'introduire ;)</p>
+<h2 id="disclaimer-aucune-solution-n-est-parfaite">Disclaimer: aucune solution n'est parfaite<a class="zola-anchor" href="#disclaimer-aucune-solution-n-est-parfaite" aria-label="Anchor link for: disclaimer-aucune-solution-n-est-parfaite" style="visibility: hidden;"></a>
+</h2>
+<p>Eh oui, je vous mentirais en vous disant que la mise en place de tests unitaires ne venait pas avec son lot d'inconvénients. Il faut en être conscient pour
+pouvoir les maitriser par la suite.</p>
+<p>Dans un premier temps, leur mise en place peut être fastidieuse, surtout sur un code déjà écrit. Néanmoins, c'est un point qui peut être rapidement effacé avec une méthodologie efficace (TDD par exemple).</p>
+<p>Ensuite, les tests unitaires par essence, suivent le développement du code testé. Il doivent donc être maintenus et entretenus. C'est donc une tâche à prendre en compte dans le temps de développement (temps largement rattrapé par la suite).</p>
+<p>Enfin, et c'est inhérent à toute solution de qualité logicielle, ces tests doivent être exécutés. En effet, s'ils ne sont pas lancés après chaque correction ou ajout de nouvelle fonctionnalité, autant dire qu'il ne servent à rien.</p>
+<blockquote>
+<p>Les tests unitaires ne sont pas LA seule solution, mais leur mise en place est clairement conseillée afin de garantir une certaine qualité logicielle.</p>
+</blockquote>
+<h1 id="demarrage-rapide-avec-ceedling">Démarrage rapide avec Ceedling<a class="zola-anchor" href="#demarrage-rapide-avec-ceedling" aria-label="Anchor link for: demarrage-rapide-avec-ceedling" style="visibility: hidden;"></a>
+</h1>
+<p><a rel="nofollow noreferrer external" href="https://www.throwtheswitch.org/ceedling">Ceedling</a> est un outil en ligne de commande qui facilite la mise en place et l’exécution de tests unitaires dans des projets écrits en C. En somme, c'est un build system, permettant de construire un environnement de test complet pour organiser et compiler les tests, les exécuter et afficher le résultat.</p>
+<p>Pour fonctionner, <a rel="nofollow noreferrer external" href="https://www.throwtheswitch.org/ceedling">Ceedling</a> s’appuie sur deux bibliothèques principales (développées par le même éditeur) :</p>
+<ul>
+<li><a rel="nofollow noreferrer external" href="https://www.throwtheswitch.org/unity">Unity</a> — le framework de test contenant tous les utilitaires d'assertions et de contrôle.</li>
+<li><a rel="nofollow noreferrer external" href="https://www.throwtheswitch.org/cmock">CMock</a> — l'outil qui permet de mock automatiquement les fonctions interface  afin de simuler les dépendances lors des tests.</li>
+</ul>
+<p>Cet ensemble d'outil s'intègre sans encombre à côté du logiciel développé. C'est une solution non intrusive, puisque le code n'est absolument pas modifié et est compilé avec l'environnement de test par un compilateur C standard (GCC par exemple). Toute la configuration est contenue dans un fichier project.yml (sources du projet, plugins, ...)</p>
+<blockquote>
+<p>L'exécutable de test généré par <a rel="nofollow noreferrer external" href="https://www.throwtheswitch.org/ceedling">Ceedling</a> est parfaitement standard, et peut donc être débuggué et/ou analysé avec les outils habituels (GDB, Valgrind, ...)</p>
+</blockquote>
+<h2 id="installation">Installation<a class="zola-anchor" href="#installation" aria-label="Anchor link for: installation" style="visibility: hidden;"></a>
+</h2>
+<p>L'installation de Ceedling est très simple. Dans un premier temps, assurez-vous d'avoir installé <a href="htts://www.ruby-lang.org/">Ruby</a>. Si vous n'en n'avez jamais entendu parlé, je vous invite à parcourir <a rel="nofollow noreferrer external" href="https://www.ruby-lang.org/fr/documentation/quickstart/">l'article dédié</a> à la présentation du language (Rassurez-vous, nul besoin de connaître Ruby pour utiliser Ceedling..). Enfin, installez la gem <a rel="nofollow noreferrer external" href="https://www.throwtheswitch.org/ceedling">Ceedling</a>.</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-keyword">  &gt;</span><span class="z-entity z-name"> gem</span><span class="z-string"> install</span><span class="z-string"> ceedling</span></span></code></pre>
+<p>Pour finir, vérifiez votre installation.</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-keyword">  &gt;</span><span class="z-entity z-name"> ceedling</span><span class="z-string"> version</span></span></code></pre><h2 id="guide-d-utilisation">Guide d'utilisation<a class="zola-anchor" href="#guide-d-utilisation" aria-label="Anchor link for: guide-d-utilisation" style="visibility: hidden;"></a>
+</h2>
+<p>Pour la démonstration, je vais m'appuyer sur <a rel="nofollow noreferrer external" href="https://github.com/MOWA2/Broki">une petite lib</a> que j'ai développé: Broki. Agissant comme un <code>broker</code>, celle-ci permet de créer des fluxs internes appelés <code>streams</code>. Les <code>producers</code> peuvent alors envoyer des données à travers ces fluxs, qui seront reçus et traités par des <code>subscribers</code>. Chaque flux est identifié uniquement par un id. Même la taille maximum du buffer pouvant être transmis est spécifiée lors de la création, les <code>producers</code> peuvent tout à fait émettre un buffer avec une taille inférieure. C'est utile avec du protobuf par exemple, qui définit un nombre max d'octets pour le payload, mais dont la taille dépend des données à sérialiser.</p>
+<pre class="giallo z-code"><code data-lang="c"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">/**</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@brief</span><span class="z-comment"> Function used to initialize Broki library.</span></span>
+<span class="giallo-l"><span class="z-comment"> * This function must be called before every other ones (cleans up the context, ...).</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment"> */</span></span>
+<span class="giallo-l"><span>broki_error </span><span class="z-entity z-name">broki_init</span><span>(</span><span class="z-storage z-type"> void</span><span> )</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">/**</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@brief</span><span class="z-comment"> Function used to create a data stream.</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@param</span><span class="z-variable"> id</span><span class="z-comment"> Id of the stream to create</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@param</span><span class="z-variable"> payload_size</span><span class="z-comment"> Maximum payload size that will go through the stream</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@return</span><span class="z-comment"> broki_error</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment"> */</span></span>
+<span class="giallo-l"><span>broki_error </span><span class="z-entity z-name">broki_create_stream</span><span>(</span><span class="z-storage z-type"> uint32_t</span><span class="z-variable"> id</span><span>,</span><span class="z-storage z-type"> uint32_t</span><span class="z-variable"> payload_size</span><span> )</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">/**</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@brief</span><span class="z-comment"> Function used to get the payload size of a data stream.</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@param</span><span class="z-variable"> id</span><span class="z-comment"> Id of the stream</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@param</span><span class="z-variable"> payload_size</span><span class="z-comment"> Pointer on payload size holder</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@return</span><span class="z-comment"> broki_error</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment"> */</span></span>
+<span class="giallo-l"><span>broki_error </span><span class="z-entity z-name">broki_get_stream_payload_size</span><span>(</span><span class="z-storage z-type"> uint32_t</span><span class="z-variable"> id</span><span>,</span><span class="z-storage z-type"> uint32_t</span><span class="z-keyword">*</span><span class="z-variable"> payload_size</span><span> )</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">/**</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@brief</span><span class="z-comment"> Function used to send data through a stream.</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@param</span><span class="z-variable"> id</span><span class="z-comment"> Id of the stream</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@param</span><span class="z-variable"> payload_size</span><span class="z-comment"> Pointer on payload size holder</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@return</span><span class="z-comment"> broki_error</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment"> */</span></span>
+<span class="giallo-l"><span>broki_error </span><span class="z-entity z-name">broki_send_in_stream</span><span>(</span><span class="z-storage z-type"> uint32_t</span><span class="z-variable"> id</span><span>,</span><span class="z-storage z-type"> void</span><span class="z-keyword">*</span><span class="z-variable"> data</span><span>,</span><span class="z-storage z-type"> uint32_t</span><span class="z-variable"> payload_size</span><span> )</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">/**</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@brief</span><span class="z-comment"> Function used to subscribe to a stream.</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@param</span><span class="z-variable"> id</span><span class="z-comment"> Id of the stream</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@param</span><span class="z-variable"> callback</span><span class="z-comment"> Callback to receive data changes</span></span>
+<span class="giallo-l"><span class="z-comment"> * </span><span class="z-storage z-type">@return</span><span class="z-comment"> broki_error</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment"> */</span></span>
+<span class="giallo-l"><span class="z-keyword">typedef</span><span class="z-storage z-type"> void</span><span> (</span><span class="z-keyword">*</span><span>broki_stream_callback</span><span>)</span><span>(</span><span class="z-storage z-type"> uint32_t</span><span> id</span><span>,</span><span class="z-storage z-type"> void</span><span class="z-keyword">*</span><span> payload</span><span>,</span><span class="z-storage z-type"> uint32_t</span><span> payload_size </span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>broki_error </span><span class="z-entity z-name">broki_subscribe_stream</span><span>(</span><span class="z-storage z-type"> uint32_t</span><span class="z-variable"> id</span><span>,</span><span> broki_stream_callback </span><span class="z-variable">callback</span><span> )</span><span>;</span></span></code></pre>
+<p>Dans ce cas précis, les fonctionnalités à tester sont assez claires:</p>
+<ul>
+<li>être en mesure de créer un <code>stream</code></li>
+<li>pouvoir y envoyer des données (<code>producer</code>)</li>
+<li>vérifier la bonne transmission (<code>subscriber</code>)</li>
+</ul>
+<p>Toute la configuration est stockée dans un seul fichier YAML <code>project.yml</code>. Cette configuration indique à Ceedling où trouver les fichiers source, de quelle manière éxecuter les tests, quels outils/plugins sont utilisés, et bien plus encore.</p>
+<p>Pour démarrer un projet:</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-keyword">  &gt;</span><span class="z-entity z-name"> ceedling</span><span class="z-string"> new</span><span class="z-string"> MyProject</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        create</span><span class="z-string">  MyProject</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        create</span><span class="z-string">  MyProject/src</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        create</span><span class="z-string">  MyProject/test</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        create</span><span class="z-string">  MyProject/test/support</span></span>
+<span class="giallo-l"><span class="z-entity z-name">        create</span><span class="z-string">  MyProject/project.yml</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-entity z-name">  🌱</span><span class="z-string"> New</span><span class="z-string"> project</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">MyProject</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string"> created</span><span class="z-string"> at</span><span class="z-string"> ./MyProject/</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">  &gt;</span><span class="z-support"> cd</span><span class="z-string"> MyProject</span></span></code></pre>
+<p>Une arborescence de base est générée, accompagnée d'un template de fichier <code>project.yml</code>. Vous n’êtes pas obligé de garder cette organisation pour votre projet. Pour la modifier, il suffira simplement de mettre à jour la section <code>:paths:</code> dans le fichier <code>project.yml</code>.</p>
+<pre class="giallo z-code"><code data-lang="yaml"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> This is where Ceedling should look for your source and test files.</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> see documentation for the many options for specifying this.</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">:p</span><span class="z-entity z-name z-tag">aths</span><span>:</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">  :t</span><span class="z-entity z-name z-tag">est</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span class="z-string"> +</span><span class="z-string">:test/</span></span>
+<span class="giallo-l"><span>    -</span><span class="z-string"> -:</span><span class="z-string">test/support</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">  :s</span><span class="z-entity z-name z-tag">ource</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span class="z-string"> s</span><span class="z-string">rc/</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">  :i</span><span class="z-entity z-name z-tag">nclude</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span class="z-string"> s</span><span class="z-string">rc/</span><span class="z-punctuation z-definition z-comment"> #</span><span class="z-comment"> In simple projects, this entry often duplicates :source</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">  :s</span><span class="z-entity z-name z-tag">upport</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span class="z-string"> t</span><span class="z-string">est/support</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">  :l</span><span class="z-entity z-name z-tag">ibraries</span><span>:</span><span> [</span><span>]</span></span></code></pre>
+<p>Le projet est quand même un peu vide... il est possible d'utiliser Ceedling pour créer une paire de fichier .c/.h avec son fichier de test.</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-keyword">  &gt;</span><span class="z-entity z-name"> ceedling</span><span class="z-string"> module:create[Demo]</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    🚧</span><span class="z-string"> Loaded</span><span class="z-string"> project</span><span class="z-string"> configuration</span><span class="z-string"> from</span><span class="z-string"> working</span><span class="z-string"> directory.</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    File</span><span class="z-string"> src/Demo.c</span><span class="z-string"> created</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    File</span><span class="z-string"> src/Demo.h</span><span class="z-string"> created</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    File</span><span class="z-string"> test/test_Demo.c</span><span class="z-string"> created</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    Generate</span><span class="z-string"> Complete</span></span></code></pre>
+<p>Pour un exemple concret, n'hésitez pas à aller faire un tour sur <a rel="nofollow noreferrer external" href="https://github.com/MOWA2/Broki">une lib</a> que j'ai développé.</p>
+<h2 id="pro-tips">Pro tips<a class="zola-anchor" href="#pro-tips" aria-label="Anchor link for: pro-tips" style="visibility: hidden;"></a>
+</h2>
+<p>Par défaut, Ceedling identifie les fichiers de tests grâce à leur préfixe <code>test_</code>.</p>
+<pre class="giallo z-code"><code data-lang="yaml"><span class="giallo-l"><span class="z-entity z-name z-tag">  :t</span><span class="z-entity z-name z-tag">est_file_prefix</span><span>:</span><span class="z-string"> t</span><span class="z-string">est_</span></span></code></pre>
+<p>CMock identifie les fichiers grâce à leur préfixe <code>mock_</code> pour le mocking automatique.</p>
+<pre class="giallo z-code"><code data-lang="c"><span class="giallo-l"><span class="z-keyword">#</span><span class="z-keyword">include</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">mock_lib_driver.h</span><span class="z-punctuation z-definition z-string">&quot;</span></span></code></pre>
+<p>Pour activer la gestion du coverage via <code>Gcov</code>, il suffit de décommenter la ligne correspondante dans la liste des plugins. De la même manière, il est possible d'activer la génération d'un fichier <code>compile_commands.json</code>.</p>
+<pre class="giallo z-code"><code data-lang="yaml"><span class="giallo-l"><span class="z-entity z-name z-tag">:p</span><span class="z-entity z-name z-tag">lugins</span><span>:</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">  :l</span><span class="z-entity z-name z-tag">oad_paths</span><span>:</span><span> [</span><span>]</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">  :e</span><span class="z-entity z-name z-tag">nabled</span><span>:</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    #</span><span class="z-comment">- beep</span></span>
+<span class="giallo-l"><span>    -</span><span class="z-string"> m</span><span class="z-string">odule_generator</span></span>
+<span class="giallo-l"><span>    -</span><span class="z-string"> g</span><span class="z-string">cov &lt;--</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    #</span><span class="z-comment">- bullseye</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    #</span><span class="z-comment">- command_hooks</span></span>
+<span class="giallo-l"><span>    -</span><span class="z-string"> c</span><span class="z-string">ompile_commands_json_db &lt;--</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    #</span><span class="z-comment">- dependencies</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    #</span><span class="z-comment">- subprojects</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    #</span><span class="z-comment">- fake_function_framework</span></span></code></pre>
+<p>Il est possible de définir des symboles qui seront utilisés pour la compilation.</p>
+<pre class="giallo z-code"><code data-lang="yaml"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> Compilation symbols to be injected into builds</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment"> See documentation for advanced options:</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment">  - Test name matchers for different symbols per test executable build</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment">  - Referencing symbols in multiple lists using advanced YAML</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">#</span><span class="z-comment">  - Specifiying symbols used during test preprocessing</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">:d</span><span class="z-entity z-name z-tag">efines</span><span>:</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">  :t</span><span class="z-entity z-name z-tag">est</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span class="z-string"> T</span><span class="z-string">EST</span><span class="z-punctuation z-definition z-comment"> #</span><span class="z-comment"> Simple list option to add symbol &#39;TEST&#39; to compilation of all files in all test executables</span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">  :r</span><span class="z-entity z-name z-tag">elease</span><span>:</span><span> [</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">  #</span><span class="z-comment"> Enable to inject name of a test as a unique compilation symbol into its respective executable build. </span></span>
+<span class="giallo-l"><span class="z-entity z-name z-tag">  :u</span><span class="z-entity z-name z-tag">se_test_definition</span><span>:</span><span class="z-constant"> FALSE</span><span> </span></span></code></pre>
+<p>Pour lancer les tests:</p>
+<pre class="giallo z-code"><code data-lang="shellscript"><span class="giallo-l"><span class="z-entity z-name">  ceedling</span><span class="z-string"> test:all</span></span>
+<span class="giallo-l"><span class="z-entity z-name">  ceedling</span><span class="z-string"> gcov:all</span><span class="z-punctuation z-definition z-comment"> #</span><span class="z-comment"> Avec le Gcovr</span></span></code></pre>
+<p>Un fichier de test doit représenter le test d'une seule fonctionnalité (fonction par exemple). Ainsi, le contenu de la fonction <code>setUp</code> doit préparer le contexte à l'utilisation de cette fonctionnalité, et la fonction <code>tearDown</code> doit clean le contexte après utilisation de la fonctionnalité testée.</p>
+<h2 id="template-fichier-de-test">Template fichier de test<a class="zola-anchor" href="#template-fichier-de-test" aria-label="Anchor link for: template-fichier-de-test" style="visibility: hidden;"></a>
+</h2>
+<pre class="giallo z-code"><code data-lang="c"><span class="giallo-l"><span class="z-punctuation z-definition z-comment">/*</span></span>
+<span class="giallo-l"><span class="z-comment"> * @file test_*.c</span></span>
+<span class="giallo-l"><span class="z-comment"> * @author *</span></span>
+<span class="giallo-l"><span class="z-comment"> * @brief * library testing project</span></span>
+<span class="giallo-l"><span class="z-comment"> * @version *</span></span>
+<span class="giallo-l"><span class="z-comment"> *</span></span>
+<span class="giallo-l"><span class="z-comment"> * @copyright Copyright (c) *</span></span>
+<span class="giallo-l"><span class="z-comment"> *</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment"> */</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-keyword">#</span><span class="z-keyword">include</span><span class="z-punctuation z-definition z-string"> &quot;</span><span class="z-string">unity.h</span><span class="z-punctuation z-definition z-string">&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">/*</span><span class="z-comment"> Library includes and mocks will go there </span><span class="z-punctuation z-definition z-comment">*/</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">/*</span><span class="z-comment"> Lib constants </span><span class="z-punctuation z-definition z-comment">*/</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">/*</span><span class="z-comment"> Local variables </span><span class="z-punctuation z-definition z-comment">*/</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">/*</span><span class="z-comment"> Locals </span><span class="z-punctuation z-definition z-comment">*/</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type">void</span><span class="z-entity z-name"> setUp</span><span>(</span><span class="z-storage z-type"> void</span><span> )</span><span>{</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    /*</span><span class="z-comment"> Will be executed before each test function </span><span class="z-punctuation z-definition z-comment">*/</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-storage z-type">void</span><span class="z-entity z-name"> tearDown</span><span>(</span><span class="z-storage z-type"> void</span><span> )</span><span>{</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">    /*</span><span class="z-comment"> Will be executed after each test function </span><span class="z-punctuation z-definition z-comment">*/</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">/*</span><span class="z-comment"> Tests functions will go there </span><span class="z-punctuation z-definition z-comment">*/</span></span>
+<span class="giallo-l"><span class="z-storage z-type">void</span><span class="z-entity z-name"> testShouldFail</span><span>(</span><span class="z-storage z-type"> void</span><span> )</span><span>{</span></span>
+<span class="giallo-l"><span class="z-entity z-name">    TEST_ASSERT_EQUAL</span><span>(</span><span class="z-constant">1</span><span>,</span><span class="z-constant"> 0</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">/*</span><span class="z-comment"> Locals </span><span class="z-punctuation z-definition z-comment">*/</span></span>
+<span class="giallo-l"></span></code></pre><h3 id="documentation-utile">Documentation utile<a class="zola-anchor" href="#documentation-utile" aria-label="Anchor link for: documentation-utile" style="visibility: hidden;"></a>
+</h3>
+<p>RTFM et happy testing ! :)</p>
+<ul>
+<li><a rel="nofollow noreferrer external" href="https://github.com/MOWA2/Broki">Broki (exemple)</a></li>
+<li><a rel="nofollow noreferrer external" href="https://www.throwtheswitch.org/ceedling">Ceedling</a></li>
+<li><a rel="nofollow noreferrer external" href="https://github.com/ThrowTheSwitch/Ceedling/blob/master/docs/CeedlingPacket.md">Documentation Ceedling</a></li>
+<li><a rel="nofollow noreferrer external" href="https://github.com/ThrowTheSwitch/Unity/blob/master/docs/UnityAssertionsReference.md">Assertions Unity</a></li>
+<li><a rel="nofollow noreferrer external" href="https://github.com/ThrowTheSwitch/CMock/blob/master/docs/CMock_Summary.md">CMock</a></li>
+</ul>
+
+      </article>
+
+      
+      
+
+      
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2026 MOWA
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://MOWA2.com/posts/feed.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;MOWA2.com&#x2F;posts&#x2F;feed.xml">https:&#x2F;&#x2F;MOWA2.com&#x2F;posts&#x2F;feed.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;MOWA2.com&#x2F;posts&#x2F;feed.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://MOWA2.com/js/main.js"></script>
+</body>
+
+</html>

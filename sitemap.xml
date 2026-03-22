@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://MOWA2.com/</loc>
+    </url>
+    <url>
+        <loc>https://MOWA2.com/categories/</loc>
+    </url>
+    <url>
+        <loc>https://MOWA2.com/categories/tests/</loc>
+    </url>
+    <url>
+        <loc>https://MOWA2.com/posts/</loc>
+    </url>
+    <url>
+        <loc>https://MOWA2.com/posts/unit-tests-with-ceedling/</loc>
+        <lastmod>2026-03-15</lastmod>
+    </url>
+    <url>
+        <loc>https://MOWA2.com/tags/</loc>
+    </url>
+    <url>
+        <loc>https://MOWA2.com/tags/c/</loc>
+    </url>
+    <url>
+        <loc>https://MOWA2.com/tags/code/</loc>
+    </url>
+    <url>
+        <loc>https://MOWA2.com/tags/tests-unitaires/</loc>
+    </url>
+</urlset>
