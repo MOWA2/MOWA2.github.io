@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://MOWA2.com/</loc>
+        <loc>https://mowa2.github.io/</loc>
     </url>
     <url>
-        <loc>https://MOWA2.com/categories/</loc>
+        <loc>https://mowa2.github.io/categories/</loc>
     </url>
     <url>
-        <loc>https://MOWA2.com/categories/tests/</loc>
+        <loc>https://mowa2.github.io/categories/tests/</loc>
     </url>
     <url>
-        <loc>https://MOWA2.com/posts/</loc>
+        <loc>https://mowa2.github.io/posts/</loc>
     </url>
     <url>
-        <loc>https://MOWA2.com/posts/unit-tests-with-ceedling/</loc>
+        <loc>https://mowa2.github.io/posts/unit-tests-with-ceedling/</loc>
         <lastmod>2026-03-15</lastmod>
     </url>
     <url>
-        <loc>https://MOWA2.com/tags/</loc>
+        <loc>https://mowa2.github.io/tags/</loc>
     </url>
     <url>
-        <loc>https://MOWA2.com/tags/c/</loc>
+        <loc>https://mowa2.github.io/tags/c/</loc>
     </url>
     <url>
-        <loc>https://MOWA2.com/tags/code/</loc>
+        <loc>https://mowa2.github.io/tags/code/</loc>
     </url>
     <url>
-        <loc>https://MOWA2.com/tags/tests-unitaires/</loc>
+        <loc>https://mowa2.github.io/tags/tests-unitaires/</loc>
     </url>
 </urlset>

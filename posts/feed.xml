@@ -2,20 +2,20 @@
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="fr">
 	<title>MOWA</title>
 	<subtitle>Si ça clignote, c’est normal.</subtitle>
-	<link rel="self" type="application/atom+xml" href="https://MOWA2.com/posts/feed.xml"/>
-  <link rel="alternate" type="text/html" href="https://MOWA2.com/posts/"/>
+	<link rel="self" type="application/atom+xml" href="https://mowa2.github.io/posts/feed.xml"/>
+  <link rel="alternate" type="text/html" href="https://mowa2.github.io/posts/"/>
   
 	<updated>2026-03-15T00:00:00+00:00</updated>
 	
-	<id>https://MOWA2.com/posts/feed.xml</id>
+	<id>https://mowa2.github.io/posts/feed.xml</id>
 	<entry xml:lang="fr">
 		<title>Tests unitaires: tester un projet C (embarqué) avec Ceedling</title>
 		<published>2026-03-15T00:00:00+00:00</published>
 		<updated>2026-03-15T00:00:00+00:00</updated>
-		<link rel="alternate" type="text/html" href="https://MOWA2.com/posts/unit-tests-with-ceedling/"/>
-		<id>https://MOWA2.com/posts/unit-tests-with-ceedling/</id>
+		<link rel="alternate" type="text/html" href="https://mowa2.github.io/posts/unit-tests-with-ceedling/"/>
+		<id>https://mowa2.github.io/posts/unit-tests-with-ceedling/</id>
     
-		<content type="html" xml:base="https://MOWA2.com/posts/unit-tests-with-ceedling/">&lt;h1 id=&quot;tester-son-code&quot;&gt;Tester son code&lt;a class=&quot;zola-anchor&quot; href=&quot;#tester-son-code&quot; aria-label=&quot;Anchor link for: tester-son-code&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+		<content type="html" xml:base="https://mowa2.github.io/posts/unit-tests-with-ceedling/">&lt;h1 id=&quot;tester-son-code&quot;&gt;Tester son code&lt;a class=&quot;zola-anchor&quot; href=&quot;#tester-son-code&quot; aria-label=&quot;Anchor link for: tester-son-code&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
 &lt;&#x2F;h1&gt;
 &lt;p&gt;Aaaah, les tests… Probablement l’un des sujets qui divise le plus dans un bureau de dev&#x27;.&lt;&#x2F;p&gt;
 &lt;blockquote&gt;

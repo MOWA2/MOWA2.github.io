@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 Allow: /
-Sitemap: https://MOWA2.com/sitemap.xml
+Sitemap: https://mowa2.github.io/sitemap.xml
